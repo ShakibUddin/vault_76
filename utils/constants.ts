@@ -1,0 +1,16 @@
+export const equipmentCategories = [
+    "Camera",
+    "Power Tools",
+    "Audio",
+    "Lighting",
+    "Construction",
+    "Gardening",
+    "Sports",
+    "Medical",
+    "Electronics",
+    "Computers",
+    "Generators",
+    "Cleaning",
+    "Event Equipment",
+    "Other",
+];

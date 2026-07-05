@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import ErrorText from "@/components/common/ErrorText";
 
 interface RegisterFormValues {
   firstName: string;
@@ -229,11 +230,7 @@ export default function Signup() {
                   </p>
                 )}
             </div>
-            {serverError && (
-              <p className="text-error text-sm text-center mb-2">
-                {serverError}
-              </p>
-            )}
+            {serverError ? <ErrorText message={serverError} /> : <></>}
             <button
               type="submit"
               className={`btn btn-primary w-full ${

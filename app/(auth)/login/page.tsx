@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
+import ErrorText from "@/components/common/ErrorText";
 
 interface LoginFormValues {
   email: string;
@@ -135,11 +136,7 @@ export default function Login() {
                 </p>
               )}
             </div>
-            {serverError && (
-              <p className="text-error text-sm text-center mb-2">
-                {serverError}
-              </p>
-            )}
+            {serverError ? <ErrorText message={serverError} /> : <></>}
             <button
               type="submit"
               className={`btn btn-primary w-full ${
