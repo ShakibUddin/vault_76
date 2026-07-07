@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Rental, { RentalStatus } from "@/models/Rental";
 import Equipment from "@/models/Equipment";
 import { getAuthUser } from "@/lib/auth";
+import Payment from "@/models/Payment";
 
 const ACTIVE_STATUSES = ["Reserved", "Rented"] as const;
 
@@ -20,6 +21,14 @@ type Conflict = {
     status: number;
     message: string;
 };
+
+// Late days are calculated separately from daysCharged, because
+// daysCharged floors at 1 (a same-day rental still costs a day), but
+// "late" should be 0 when returned on time — no artificial minimum.
+function lateDaysBetween(expected: Date, actual: Date) {
+    const ms = actual.getTime() - expected.getTime();
+    return ms > 0 ? Math.ceil(ms / (1000 * 60 * 60 * 24)) : 0;
+}
 
 function daysBetween(start: Date, end: Date) {
     const ms = end.getTime() - start.getTime();
@@ -327,6 +336,78 @@ export async function PATCH(
             }
 
             await rental.save({ session });
+
+            updatedRental = rental;
+
+            // Charge for the rental once it's actually returned. Terminal-state
+            // guard above already guarantees this only ever fires once per rental
+            // (Returned can't be re-entered), so there's no risk of double-billing.
+            if (nextStatus === "Returned") {
+                const daysCharged = daysBetween(newRentalDate, effectiveEndDate);
+                const lateDays = lateDaysBetween(newExpectedReturnDate, effectiveEndDate);
+
+                // totalAmount here is the full rental charge (e.g. 100), already
+                // computed above from dailyRate * quantity * daysCharged.
+                const depositOnFile = rental.securityDeposit || 0;
+
+                // How much of the deposit gets credited toward the bill — can't
+                // credit more than what's actually owed.
+                const depositApplied = Math.min(depositOnFile, totalAmount);
+
+                // What the customer still owes after the deposit is applied.
+                const amountDue = Math.round((totalAmount - depositApplied) * 100) / 100;
+
+                // What the customer gets back, if the deposit was more than the bill
+                // (e.g. deposit 150, bill only 100 → refund 50).
+                const refundAmount =
+                    Math.round((depositOnFile - depositApplied) * 100) / 100;
+
+                if (amountDue > 0) {
+                    await Payment.create(
+                        [
+                            {
+                                rentalId: rental._id,
+                                equipmentId: rental.equipmentId,
+                                customerId: rental.customerId,
+                                type: "Rental",
+                                amount: amountDue,
+                                quantity: newQuantity,
+                                dailyRate: rental.dailyRate,
+                                daysCharged,
+                                lateDays,
+                                depositApplied,
+                                method: "Cash",
+                                notes:
+                                    `Total bill ${totalAmount.toFixed(2)}, ${depositApplied.toFixed(2)} credited from deposit.` +
+                                    (lateDays > 0
+                                        ? ` Includes ${lateDays} day(s) beyond the agreed return date.`
+                                        : ""),
+                                createdBy: authUser.userId,
+                            },
+                        ],
+                        { session }
+                    );
+                }
+
+                if (refundAmount > 0) {
+                    await Payment.create(
+                        [
+                            {
+                                rentalId: rental._id,
+                                equipmentId: rental.equipmentId,
+                                customerId: rental.customerId,
+                                type: "Refund",
+                                amount: refundAmount,
+                                depositApplied,
+                                method: "Cash",
+                                notes: `Deposit ${depositOnFile.toFixed(2)} exceeded total bill ${totalAmount.toFixed(2)}.`,
+                                createdBy: authUser.userId,
+                            },
+                        ],
+                        { session }
+                    );
+                }
+            }
 
             updatedRental = rental;
         });

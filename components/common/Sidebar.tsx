@@ -24,8 +24,8 @@ const navigation = [
     href: "/rentals",
   },
   {
-    name: "Users",
-    href: "/users",
+    name: "Payments",
+    href: "/payments",
   },
 ];
 

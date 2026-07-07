@@ -5,6 +5,7 @@ import Rental from "@/models/Rental";
 import Equipment from "@/models/Equipment";
 import Customer from "@/models/Customer";
 import { getAuthUser } from "@/lib/auth";
+import Payment from "@/models/Payment";
 
 const ACTIVE_STATUSES = ["Reserved", "Rented"] as const;
 
@@ -301,13 +302,37 @@ export async function POST(request: NextRequest) {
                         dailyRate: equipment.dailyRate,
                         securityDeposit: Number(securityDeposit) || 0,
                         totalAmount,
-                        status: requestedStatus, // was hardcoded "Rented"
+                        status: requestedStatus,
                         notes: notes?.trim() ?? "",
                         createdBy: authUser.userId,
                     },
                 ],
                 { session }
             );
+
+            createdRental = rental;
+
+            // Record the deposit as a payment, if one was actually collected.
+            // A rental with no deposit shouldn't leave a $0 payment record lying around.
+            const depositAmount = Number(securityDeposit) || 0;
+
+            if (depositAmount > 0) {
+                await Payment.create(
+                    [
+                        {
+                            rentalId: rental._id,
+                            equipmentId: rental.equipmentId,
+                            customerId: rental.customerId,
+                            type: "Deposit",
+                            amount: depositAmount,
+                            method: "Cash",
+                            notes: "Security deposit collected at rental creation.",
+                            createdBy: authUser.userId,
+                        },
+                    ],
+                    { session }
+                );
+            }
 
             createdRental = rental;
         });
