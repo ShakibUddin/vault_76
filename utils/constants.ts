@@ -14,3 +14,5 @@ export const equipmentCategories = [
     "Event Equipment",
     "Other",
 ];
+
+export const ALL_RENTAL_STATUSES = ["Reserved", "Rented", "Returned", "Cancelled"] as const;

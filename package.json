@@ -12,6 +12,7 @@
     "@tanstack/react-table": "^8.21.3",
     "bcryptjs": "^3.0.3",
     "daisyui": "^5.6.13",
+    "dayjs": "^1.11.21",
     "formik": "^2.4.9",
     "jose": "^6.2.3",
     "jsonwebtoken": "^9.0.3",
