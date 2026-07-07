@@ -273,7 +273,7 @@ export async function PATCH(
                 }
             }
 
-            // Handle actualReturnDate / Returned status.
+            // --- FIXED: Resolve actualReturnDate BEFORE calculating totals ---
             let resolvedActualReturnDate = rental.actualReturnDate;
 
             if (nextStatus === "Returned") {
@@ -311,7 +311,7 @@ export async function PATCH(
             }
 
             // Recompute totalAmount using the snapshot dailyRate, based on
-            // actual return date if present, otherwise expected.
+            // actual return date if present, otherwise expected. Now works accurately!
             const effectiveEndDate =
                 resolvedActualReturnDate ?? newExpectedReturnDate;
 
@@ -411,7 +411,6 @@ export async function PATCH(
 
             updatedRental = rental;
         });
-
 
         if (conflict) {
             const { message, status: conflictStatus } = conflict!;
