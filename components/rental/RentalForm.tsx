@@ -94,8 +94,6 @@ export default function RentalForm({
     enableReinitialize: true,
 
     onSubmit: async (values, { setSubmitting }) => {
-      console.log({ values });
-
       setServerError(null);
 
       // Client-side guard mirroring the backend transition rules —

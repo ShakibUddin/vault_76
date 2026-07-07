@@ -120,7 +120,7 @@ export default function PaymentPage() {
         </div>
 
         {/* Summary strip — reflects the current filters, not just this page */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="stat rounded-box bg-base-200">
             <div className="stat-title">Deposits Held</div>
             <div className="stat-value text-info text-2xl">
@@ -132,13 +132,6 @@ export default function PaymentPage() {
             <div className="stat-title">Rental Charges</div>
             <div className="stat-value text-success text-2xl">
               ${rentalCharges.toFixed(2)}
-            </div>
-          </div>
-
-          <div className="stat rounded-box bg-base-200">
-            <div className="stat-title">Refunds</div>
-            <div className="stat-value text-warning text-2xl">
-              ${refunds.toFixed(2)}
             </div>
           </div>
 

@@ -173,7 +173,7 @@ export default function Dashboard() {
       <div>
         <h2 className="mb-3 text-xl font-semibold">Revenue (Last 30 Days)</h2>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <StatCard
             label="Deposits Collected"
             value={`$${stats.revenue.last30Days.deposits.toFixed(2)}`}
@@ -183,11 +183,6 @@ export default function Dashboard() {
             label="Rental Charges"
             value={`$${stats.revenue.last30Days.rentalCharges.toFixed(2)}`}
             accent="text-success"
-          />
-          <StatCard
-            label="Refunds"
-            value={`$${stats.revenue.last30Days.refunds.toFixed(2)}`}
-            accent="text-warning"
           />
           <StatCard
             label="Net (30d)"
@@ -209,7 +204,11 @@ export default function Dashboard() {
               <XAxis dataKey="label" />
               <YAxis />
               <Tooltip
-                formatter={(value: number) => [`$${value.toFixed(2)}`, "Net"]}
+                formatter={(value) => {
+                  const amount =
+                    typeof value === "number" ? value : Number(value ?? 0);
+                  return [`$${amount.toFixed(2)}`, "Net"];
+                }}
               />
               <Bar
                 dataKey="net"
