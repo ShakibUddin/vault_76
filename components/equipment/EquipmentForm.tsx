@@ -28,16 +28,6 @@ interface EquipmentFormProps {
   onSuccess: () => void;
 }
 
-const defaultValues: EquipmentFormValues = {
-  name: "",
-  category: "",
-  brand: "",
-  model: "",
-  description: "",
-  dailyRate: "",
-  quantity: "",
-};
-
 export default function EquipmentForm({
   loading = false,
   update = false,
