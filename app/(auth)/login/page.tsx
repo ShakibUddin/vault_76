@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -25,7 +25,6 @@ const validationSchema = Yup.object({
 
 export default function Login() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const setUser = useAuthStore((state) => state.setUser);
   const [serverError, setServerError] = useState<string | null>(null);
   const formik = useFormik<LoginFormValues>({
@@ -49,7 +48,7 @@ export default function Login() {
         toast.success("Loggedin successfully.");
 
         setUser(data.user); // update Zustand immediately, no extra fetch needed
-        router.push(searchParams.get("from") ?? "/dashboard");
+        router.push("/dashboard");
         router.refresh();
       } catch {
         setServerError("Network error. Please try again.");

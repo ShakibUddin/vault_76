@@ -1,4 +1,4 @@
-// middleware.ts
+// proxy.ts
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
@@ -21,7 +21,7 @@ async function verifyToken(token: string) {
     }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const token = request.cookies.get("auth_token")?.value;
 
@@ -47,9 +47,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // Run on everything except static assets, images, and API routes.
-    // (API routes should verify auth themselves inside each handler,
-    // since middleware here is only guarding page navigation.)
     matcher: [
         "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
