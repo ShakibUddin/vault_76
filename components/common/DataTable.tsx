@@ -63,62 +63,64 @@ export default function DataTable<TData>({
   return (
     <div className="w-full">
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-base-300">
-        <table className="table">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="bg-base-200">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
+      <div className="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-lg">
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id} className="bg-base-200">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
 
-          <tbody>
-            {isLoading ? (
-              // Skeleton rows while fetching, so the layout doesn't jump.
-              Array.from({ length: pageSize }).map((_, i) => (
-                <tr key={`skeleton-${i}`}>
-                  {columns.map((_, j) => (
-                    <td key={j}>
-                      <div className="skeleton h-4 w-full"></div>
-                    </td>
-                  ))}
+            <tbody>
+              {isLoading ? (
+                // Skeleton rows while fetching, so the layout doesn't jump.
+                Array.from({ length: pageSize }).map((_, i) => (
+                  <tr key={`skeleton-${i}`}>
+                    {columns.map((_, j) => (
+                      <td key={j}>
+                        <div className="skeleton h-4 w-full"></div>
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : table.getRowModel().rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className="py-10 text-center text-base-content/60"
+                  >
+                    {emptyMessage}
+                  </td>
                 </tr>
-              ))
-            ) : table.getRowModel().rows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="py-10 text-center text-base-content/60"
-                >
-                  {emptyMessage}
-                </td>
-              </tr>
-            ) : (
-              table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="hover">
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination controls */}

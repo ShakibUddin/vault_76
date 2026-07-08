@@ -119,26 +119,53 @@ export default function PaymentPage() {
           </p>
         </div>
 
-        {/* Summary strip — reflects the current filters, not just this page */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="stat rounded-box bg-base-200">
-            <div className="stat-title">Deposits Held</div>
-            <div className="stat-value text-info text-2xl">
-              ${deposits.toFixed(2)}
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="card border border-base-300 bg-base-100 shadow-sm transition-all hover:shadow-md">
+            <div className="card-body p-6">
+              <p className="text-sm font-medium text-base-content/60">
+                Deposits Held
+              </p>
+
+              <h2 className="mt-2 text-3xl font-bold text-info">
+                ${deposits.toFixed(2)}
+              </h2>
+
+              <p className="mt-2 text-xs text-base-content/50">
+                Active security deposits
+              </p>
             </div>
           </div>
 
-          <div className="stat rounded-box bg-base-200">
-            <div className="stat-title">Rental Charges</div>
-            <div className="stat-value text-success text-2xl">
-              ${rentalCharges.toFixed(2)}
+          <div className="card border border-base-300 bg-base-100 shadow-sm transition-all hover:shadow-md">
+            <div className="card-body p-6">
+              <p className="text-sm font-medium text-base-content/60">
+                Rental Charges
+              </p>
+
+              <h2 className="mt-2 text-3xl font-bold text-success">
+                ${rentalCharges.toFixed(2)}
+              </h2>
+
+              <p className="mt-2 text-xs text-base-content/50">
+                Revenue from rentals
+              </p>
             </div>
           </div>
 
-          <div className="stat rounded-box bg-base-200">
-            <div className="stat-title">Net Collected</div>
-            <div className="stat-value text-2xl">
-              ${netCollected.toFixed(2)}
+          <div className="card border border-base-300 bg-base-100 shadow-sm transition-all hover:shadow-md">
+            <div className="card-body p-6">
+              <p className="text-sm font-medium text-base-content/60">
+                Net Collected
+              </p>
+
+              <h2 className="mt-2 text-3xl font-bold text-primary">
+                ${netCollected.toFixed(2)}
+              </h2>
+
+              <p className="mt-2 text-xs text-base-content/50">
+                Total payments received
+              </p>
             </div>
           </div>
         </div>
